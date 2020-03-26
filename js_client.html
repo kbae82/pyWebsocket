@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Web client for the python websocket (Robo con)</title>
+        <style type="text/css">
+            body {
+                font-family: "Courier New", sans-serif;
+                text-align: center;
+            }
+            .buttons {
+                font-size: 4em;
+                display: flex;
+                justify-content: center;
+            }
+            .button, .value {
+                width:auto;
+                line-height: 1;
+                padding: 0.5rem;
+                margin: 1rem;
+                border: medium solid;
+                min-height: 1em;
+                font-size: 1.5em;
+            }
+            .button {
+                cursor: pointer;
+                user-select: none;
+            }
+            .forward, .backward, .left, .right {
+                color: green;
+            }
+            .stop {
+                color: red;
+                min-width: 2em;
+                text-align: center;
+            }
+            .value {
+				        height:auto;
+                font-size: 5em;
+            }
+            .state {
+                font-size: 2em;
+            }
+        </style>
+    </head>
+    <body>
+        <img src="./resources/stop.gif" id="imgDir">
+        <div class="value">?</div>
+        <div class="buttons">
+            <div class="forward button">F</div>
+            <div class="backward button">B</div>
+            <div class="stop button">STOP</div>
+            <div class="left button">L</div>
+            <div class="right button">R</div>
+        </div>
+        <div class="state">
+            <span class="users">0 user</span> connceted
+        </div>
+        <script>
+            const server_info = 'PYTHON SERVER IP:PORT'
+            //*** When you are using Ngrok, you only need the url.
+            //ex) 1968ddc5.ngrok.io
+            var forward = document.querySelector('.forward'),
+                backward = document.querySelector('.backward'),
+                left = document.querySelector('.left'),
+                right = document.querySelector('.right'),
+                stop = document.querySelector('.stop'),
+                value = document.querySelector('.value'),
+                users = document.querySelector('.users'),
+                websocket = new WebSocket("ws://" + server_info);
+
+
+            forward.onclick = function (event) {
+                websocket.send(JSON.stringify({action: 'forward'}));
+            }
+            backward.onclick = function (event) {
+                websocket.send(JSON.stringify({action: 'backward'}));
+            }
+            left.onclick = function (event) {
+                websocket.send(JSON.stringify({action: 'left'}));
+            }
+            right.onclick = function (event) {
+                websocket.send(JSON.stringify({action: 'right'}));
+            }
+            stop.onclick = function (event) {
+                websocket.send(JSON.stringify({action: 'stop'}));
+            }
+
+            websocket.onmessage = function (event) {
+                data = JSON.parse(event.data);
+                switch (data.type) {
+
+                    case 'state':
+                        value.textContent = data.value;
+                        updateImgDir(value.textContent.toLowerCase());
+                        break;
+
+                    case 'users':
+                      users.textContent = (
+                      data.count.toString() + " user" +
+                        (data.count == 1 ? "" : "s"));
+                      break;
+
+                    default:
+                        console.error(
+                            "unsupported event", data);
+                }
+            };
+
+            function updateImgDir(dir){
+              if(dir == 'stop'){
+                document.getElementById("imgDir").src = "./resources/stop.gif";
+              }
+              else{
+                document.getElementById("imgDir").src = "./resources/"+dir+".png";
+              }
+
+            }
+        </script>
+    </body>
+</html>
