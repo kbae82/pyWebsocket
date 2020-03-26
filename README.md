@@ -34,6 +34,7 @@ To use
 - Click a button, you will see the displayed value is all synced
 - With Android app, you can see browser gets updated itself.
 - Console for the server will also print the value out.
+
 ![Demo](https://media.giphy.com/media/IhgbVNY6Tgx20oOwFY/giphy.gif)
 
 
