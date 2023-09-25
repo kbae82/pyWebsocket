@@ -1,5 +1,5 @@
 asyncio==3.4.3
-gevent==1.4.0
+gevent==23.9.1
 greenlet==0.4.15
 websocket==0.2.1
 websockets==9.1
